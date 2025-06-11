@@ -1,7 +1,7 @@
 
 -- 1. Give the name, release year, and worldwide gross of the lowest grossing movie.
 
--- SELECT film_title as name, release_year, MIN(worldwide_gross)
+-- SELECT film_title as name, release_year, worldwide_gross
 -- FROM specs as s
 -- LEFT JOIN revenue as r
 -- ON s.movie_id = r.movie_id
@@ -22,8 +22,8 @@
 -- ORDER BY r.imdb_rating DESC
 --LIMIT 1
 
-
 -- ANSWER 2008 has the highest average imdb rating of 9.0.
+-- CORRECT ANSWER IS 1991
 
 -- select s.release_year, AVG(imdb_rating) as avg_imdb_rating
 -- FROM specs as s
@@ -73,7 +73,7 @@
 
 -- 5. Write a query that returns the five distributors with the highest average movie budget.
 
--- SELECT d.company_name, ROUND(AVG(r.film_budget),0) as average_budget
+-- SELECT d.company_name, to_char(ROUND(AVG(r.film_budget),0), 'FM$999,999,999,999') as average_budget
 -- FROM distributors as d
 -- LEFT JOIN specs as s
 -- ON d.distributor_id = s.domestic_distributor_id
@@ -86,7 +86,7 @@
 
 -- 6a. How many movies in the dataset are distributed by a company which is not headquartered in California? 
 
--- SELECT d.headquarters, COUNT(s.movie_id) as count_of_not_hq_in_cali
+-- SELECT d.headquarters, COUNT(s.movie_id) as movie_count_not_hq_in_cali
 -- FROM specs as s
 -- LEFT JOIN distributors as d
 -- ON s.domestic_distributor_id = d.distributor_id
@@ -104,7 +104,7 @@
 -- ON s.domestic_distributor_id = d.distributor_id
 -- LEFT JOIN rating as r
 -- USING (movie_id)
--- WHERE d.headquarters NOT LIKE '%CA'
+-- WHERE d.headquarters NOT LIKE '%, CA'
 -- GROUP BY s.movie_id, s.film_title, r.imdb_rating
 -- ORDER BY r.imdb_rating DESC
 -- LIMIT 1
@@ -115,19 +115,54 @@
 
 -- SELECT *
 -- FROM
+
 -- (SELECT ROUND(AVG(r.imdb_rating),2) as avg_imdb_rating_movies_lt_2hrs
 -- FROM specs as s
 -- LEFT JOIN rating as r
 -- USING (movie_id)
--- WHERE (s.length_in_min/60) < 2
--- LIMIT 1)
+-- WHERE (s.length_in_min/60) < 2)
+
 -- CROSS JOIN
+
 -- (SELECT ROUND(AVG(r.imdb_rating),2) as avg_imdb_rating_movies_gte_2hrs
 -- FROM specs as s
 -- LEFT JOIN rating as r
 -- USING (movie_id)
--- WHERE (s.length_in_min/60) >= 2
--- LIMIT 1);
+-- WHERE (s.length_in_min/60) >= 2);
 
 
 --ANSWER Movies over 2 hours have a higher average IMDB rating.
+
+------------------------------CODE BY KRITHIKA---------------------------------
+
+-- SELECT 'movies < 2 hours' AS movie_time, AVG(imdb_rating)
+-- FROM specs
+-- JOIN rating
+-- 	USING(movie_id)
+-- WHERE  length_in_min <120
+-- --UNION
+-- SELECT 'movies > 2 hours' AS movie_time ,AVG(imdb_rating)
+-- FROM specs
+-- JOIN rating
+-- 	USING(movie_id)
+-- WHERE  length_in_min >120
+-- --GROUP BY film_title
+-- we need to use order by avg(imdb_rating) desc at the end
+
+---------------------------------------CODE BY JENNIFER WILLIAMS------------------------------ 
+
+-- SELECT
+--     CASE
+--         WHEN specs.length_in_min > 120 THEN 'Over 2 Hours'
+--         WHEN specs.length_in_min <= 120 THEN '2 Hours or Less' -- This includes movies exactly 120 mins. 
+--     END AS film_length_category, -- This creates a new column called film_length_category that assigns each movie to one of your desired categories based on its length 
+--     AVG(rating.imdb_rating) AS average_rating
+-- FROM
+--     specs
+-- JOIN
+--     rating ON specs.movie_id = rating.movie_id
+-- GROUP BY
+--     film_length_category -- Grouping all movies belonging to 'Over 2 Hours' into one group and '2 Hours or Less' into another, allowing AVG() to calculate the average for each category.
+-- ORDER BY 1 DESC;
+
+
