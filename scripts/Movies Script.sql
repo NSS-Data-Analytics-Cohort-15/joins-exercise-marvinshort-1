@@ -20,14 +20,32 @@
 -- ON s.movie_id = r.movie_id
 -- GROUP BY release_year, r.imdb_rating
 -- ORDER BY r.imdb_rating DESC
--- LIMIT 1
+--LIMIT 1
 
 
 -- ANSWER 2008 has the highest average imdb rating of 9.0.
 
+-- select s.release_year, AVG(imdb_rating) as avg_imdb_rating
+-- FROM specs as s
+-- LEFT JOIN rating as r
+-- USING (movie_id)
+-- GROUP BY s.release_year, r.imdb_rating
+-- ORDER BY r.imdb_rating DESC
 
 
--- 3. What is the highest grossing G-rated movie? Which company distributed it?
+-- 3. What is the highest grossing G-rated movie?
+
+-- SELECT film_title, mpaa_rating, worldwide_gross
+-- FROM specs as s
+-- LEFT JOIN revenue as r
+-- ON s.movie_id = r.movie_id
+-- WHERE mpaa_rating = 'G'
+-- ORDER BY worldwide_gross DESC
+-- LIMIT 1
+
+-- ANSWER The highest grossing G-Rated movie is Toy Story 4.
+
+-- Which company distributed it?
 
 -- SELECT film_title, mpaa_rating, company_name, worldwide_gross
 -- FROM specs as s
@@ -39,7 +57,7 @@
 -- ORDER BY worldwide_gross DESC
 -- LIMIT 1
 
--- ANSWER THe highest grossing G-Rated movie is Toy Story 4, distributed by Walt Disney.
+-- ANSWER Toy Story 4 was distributed by Walt Disney.
 
 
 -- 4. Write a query that returns, for each distributor in the distributors table, the distributor name and the number of movies associated with that distributor in the movies 
@@ -51,6 +69,7 @@
 -- ON d.distributor_id = s.domestic_distributor_id
 -- GROUP BY d.company_name
 -- ORDER BY movie_count DESC
+
 
 -- 5. Write a query that returns the five distributors with the highest average movie budget.
 
